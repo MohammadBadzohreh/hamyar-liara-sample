@@ -1,13 +1,19 @@
 import http from "node:http";
 import { randomUUID, timingSafeEqual } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { checkout } from "./src/checkout.mjs";
 import { ResourceScenario } from "./src/resource-scenario.mjs";
 const resources = new ResourceScenario();
+let sourceCommit = "unavailable";
+try {
+  const metadata = JSON.parse(readFileSync(new URL("./hamyar-build.json", import.meta.url), "utf8"));
+  if (/^[a-f0-9]{40}$/.test(metadata.commit)) sourceCommit = metadata.commit;
+} catch {}
 const log = (data) =>
   console.log(
     JSON.stringify({
       time: new Date().toISOString(),
-      release: process.env.RELEASE_SHA || "unavailable",
+      release: sourceCommit,
       ...data,
     }),
   );
@@ -21,6 +27,7 @@ const authorized = (req) => {
   );
 };
 const server = http.createServer(async (req, res) => {
+  res.setHeader("X-Hamyar-Commit", sourceCommit);
   const requestId = randomUUID(),
     path = new URL(req.url, "http://localhost").pathname,
     started = Date.now();
