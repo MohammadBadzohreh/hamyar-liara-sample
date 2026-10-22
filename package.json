@@ -1,1 +1,14 @@
-{"name":"hamyar-demo-shop","version":"1.0.0","private":true,"type":"module","engines":{"node":">=22"},"scripts":{"start":"node server.mjs","test":"node --test test/*.test.mjs"}}
+{
+  "name": "hamyar-demo-shop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "preinstall": "node -e \"console.error('HAMYAR_CONTROLLED_BUILD_FAILURE');process.exit(1)\""
+  }
+}
